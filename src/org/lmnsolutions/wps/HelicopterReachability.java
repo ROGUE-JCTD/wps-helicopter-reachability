@@ -120,9 +120,18 @@ class FloodFill {
 		return xform.transform(coord, null);
 	}
 	
+	private static double nauticalMilesTraveled(double knots, double minutes)
+	{
+		return knots * (minutes / 60);
+	}
 	private static Unit<Length> nauticalMilesTraveled(Unit<Velocity> knots, Unit<Duration> duration)
 	{
 		return knots.times(duration).asType(Length.class);
+	}
+	
+	private static double nauticalMilesToMeters(double nm)
+	{
+		return nm * 1852;
 	}
 	
 	private static Unit<Length> nauticalMilesToMeters(Unit<Length> nm)
@@ -143,9 +152,15 @@ class FloodFill {
 		Unit<Length> dist_traveled = nauticalMilesTraveled(NonSI.KNOT.times(airSpeed), NonSI.MINUTE.times(time));
 		System.out.println("nautical miles traveled");		
 		System.out.println(dist_traveled);
+		
+		double dist_traveled_d = nauticalMilesTraveled(airSpeed, time);
+		System.out.println(dist_traveled_d);
 
-		System.out.println("nautical miles traveled in meters (1 nm = 1,852 meters");
+		System.out.println("nautical miles traveled in meters (1 nm = 1,852 meters)");
 		System.out.println(nauticalMilesToMeters(dist_traveled));
+		
+		dist_traveled_d = nauticalMilesToMeters(dist_traveled_d); 
+		System.out.println(dist_traveled_d);
 		
 		RenderedImage image = coverage.getRenderedImage();
 		
