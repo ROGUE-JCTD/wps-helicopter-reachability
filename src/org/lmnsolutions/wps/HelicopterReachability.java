@@ -1,5 +1,6 @@
 package org.lmnsolutions.wps;
 
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -7,6 +8,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
+
+import javax.measure.quantity.Duration;
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Velocity;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 import org.geoserver.wps.gs.GeoServerProcess;
 import org.geoserver.wps.gs.PolygonExtractionProcess;
@@ -19,6 +27,7 @@ import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.process.ProcessException;
+import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.util.NullProgressListener;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
@@ -35,9 +44,9 @@ public class HelicopterReachability implements GeoServerProcess {
     public SimpleFeatureCollection execute(
             @DescribeParameter(name = "raster", description = "The raster to check against.") GridCoverage2D coverage,
     		@DescribeParameter(name = "startPoint", description = "The point to start at.") Geometry startPoint,
-    		@DescribeParameter(name = "maxElevation", description = "Maximum Elevation that can be considered passable") double maxElevation,
-    		@DescribeParameter(name = "airSpeed", description = "vahicle air speed") double airSpeed,
-    		@DescribeParameter(name = "time", description = "time availible to reach a destination") double time)
+    		@DescribeParameter(name = "maxElevation", description = "Maximum Elevation that can be considered passable in meters") double maxElevation,
+    		@DescribeParameter(name = "airSpeed", description = "vehicle air speed in knots") double airSpeed,
+    		@DescribeParameter(name = "time", description = "time availible to reach a destination in minutes") double time)
             throws Exception {
     	
 
@@ -98,18 +107,45 @@ class FloodFill {
     	return intArrayOne[0];
     }
     
-	private static DirectPosition mapToPixel(DirectPosition2D coord, GridGeometry grid) throws MismatchedDimensionException,TransformException {
+	private static DirectPosition pixelToMap(DirectPosition2D pixel, GridGeometry grid) throws MismatchedDimensionException, TransformException
+	{
+		MathTransform xform = grid.getGridToCRS();
+		return xform.transform(pixel, null);
+	}
+	
+	private static DirectPosition mapToPixel(DirectPosition2D coord, GridGeometry grid) throws MismatchedDimensionException, TransformException
+	{
 		MathTransform xform = grid.getGridToCRS();
 		xform = xform.inverse();
 		return xform.transform(coord, null);
 	}
 	
-	private static DirectPosition pixelToMap(int x, int y, GridGeometry grid) throws MismatchedDimensionException, TransformException {
-		MathTransform xform = grid.getGridToCRS();
-		return xform.transform(new DirectPosition2D(x, y), null); //TODO: get rid of the new!
-	}	
+	private static Unit<Length> nauticalMilesTraveled(Unit<Velocity> knots, Unit<Duration> duration)
+	{
+		return knots.times(duration).asType(Length.class);
+	}
+	
+	private static Unit<Length> nauticalMilesToMeters(Unit<Length> nm)
+	{
+		return nm.transform(NonSI.NAUTICAL_MILE.getConverterTo(SI.METER));
+	}
+	
+	private static Unit<Length> geodeticDistanceInMeters(Point2D source, Point2D target)
+	{
+		GeodeticCalculator calculator = new GeodeticCalculator();
+		calculator.setStartingGeographicPoint(source);
+		calculator.setDestinationGeographicPoint(target);
+		return SI.METER.times(calculator.getOrthodromicDistance());
+	}
     
 	public static SimpleFeatureCollection floodFill(GridCoverage2D coverage, Geometry point, double maxElevation, double time /*use Duration instead*/, double airSpeed) throws Exception{
+
+		Unit<Length> dist_traveled = nauticalMilesTraveled(NonSI.KNOT.times(airSpeed), NonSI.MINUTE.times(time));
+		System.out.println("nautical miles traveled");		
+		System.out.println(dist_traveled);
+
+		System.out.println("nautical miles traveled in meters (1 nm = 1,852 meters");
+		System.out.println(nauticalMilesToMeters(dist_traveled));
 		
 		RenderedImage image = coverage.getRenderedImage();
 		
@@ -117,7 +153,6 @@ class FloodFill {
 		int height = image.getHeight();
 		
 		DirectPosition pointIndex = mapToPixel(new DirectPosition2D(point.getCoordinate().x, point.getCoordinate().y), coverage.getGridGeometry());
-		
 		
 		int pointIndexX = (int)pointIndex.getOrdinate(0);
 		int pointIndexY = (int)pointIndex.getOrdinate(1);
@@ -181,7 +216,7 @@ class FloodFill {
 	        						cg = currentNode.g + 1.41421356;
 	        					}
 	        					
-	        					System.out.println("-- child.x: "+ cx + ", child.y: " + cy + ", cg: " + cg + ", hash: " + hash + ", new: " + (existingNode==null?true:false));
+//	        					System.out.println("-- child.x: "+ cx + ", child.y: " + cy + ", cg: " + cg + ", hash: " + hash + ", new: " + (existingNode==null?true:false));
 	        				
 	        					// do not push nodes that are beyond reachability cut-off
 	        					if(cg <= gMax) {

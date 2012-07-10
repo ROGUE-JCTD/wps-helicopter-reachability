@@ -11,6 +11,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-metadata/2.7-SNAPSHOT/gt-metadata-2.7-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-opengis/2.7-SNAPSHOT/gt-opengis-2.7-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-main/2.7-SNAPSHOT/gt-main-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/java/dev/jsr-275/jsr-275/1.0-beta-2/jsr-275-1.0-beta-2.jar"/>
 	
 	<classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-utils/1.1.1/jt-utils-1.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/vividsolutions/jts/1.12/jts-1.12.jar"/>
