@@ -139,12 +139,14 @@ class FloodFill {
 		return nm.transform(NonSI.NAUTICAL_MILE.getConverterTo(SI.METER));
 	}
 	
-	private static Unit<Length> geodeticDistanceInMeters(Point2D source, Point2D target)
+	private static double geodeticDistanceInMeters(Point2D source, Point2D target)
 	{
 		GeodeticCalculator calculator = new GeodeticCalculator();
 		calculator.setStartingGeographicPoint(source);
 		calculator.setDestinationGeographicPoint(target);
-		return SI.METER.times(calculator.getOrthodromicDistance());
+		
+		//return SI.METER.times(calculator.getOrthodromicDistance());
+		return calculator.getOrthodromicDistance();
 	}
     
 	public static SimpleFeatureCollection floodFill(GridCoverage2D coverage, Geometry point, double maxElevation, double time /*use Duration instead*/, double airSpeed) throws Exception{
@@ -221,12 +223,17 @@ class FloodFill {
 	        				// only if this spot has not been visited in the past
 	        				if (existingNode == null) {
 	        					double cg = 0;
+
+	        					// Pixel values to map locations
+	        					DirectPosition currentLoc = pixelToMap(new DirectPosition2D(currentNode.x, currentNode.y), coverage.getGridGeometry());
+	        					DirectPosition cLoc = pixelToMap(new DirectPosition2D(cx, cy), coverage.getGridGeometry());
 	        					
-	        					if (cx == currentNode.x || cy == currentNode.y) {
-	        						cg = currentNode.g + 1;
-	        					} else {
-	        						cg = currentNode.g + 1.41421356;
-	        					}
+	        					// TODO: It would probably be faster to project the raster to an equidistant projection and just use Euclidean distance formula
+	        					// rather than calling geodetic distance for every pixel-pixel calculation.
+	        					double newg = geodeticDistanceInMeters(new DirectPosition2D(currentLoc.getOrdinate(0), currentLoc.getOrdinate(1)),
+	        							new DirectPosition2D(cLoc.getOrdinate(0), cLoc.getOrdinate(1)));
+	        						        					
+        						cg = currentNode.g + newg;
 	        					
 //	        					System.out.println("-- child.x: "+ cx + ", child.y: " + cy + ", cg: " + cg + ", hash: " + hash + ", new: " + (existingNode==null?true:false));
 	        				
