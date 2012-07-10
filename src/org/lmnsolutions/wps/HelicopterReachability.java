@@ -149,19 +149,19 @@ class FloodFill {
     
 	public static SimpleFeatureCollection floodFill(GridCoverage2D coverage, Geometry point, double maxElevation, double time /*use Duration instead*/, double airSpeed) throws Exception{
 
+		/*
 		Unit<Length> dist_traveled = nauticalMilesTraveled(NonSI.KNOT.times(airSpeed), NonSI.MINUTE.times(time));
 		System.out.println("nautical miles traveled");		
 		System.out.println(dist_traveled);
-		
-		double dist_traveled_d = nauticalMilesTraveled(airSpeed, time);
-		System.out.println(dist_traveled_d);
 
 		System.out.println("nautical miles traveled in meters (1 nm = 1,852 meters)");
 		System.out.println(nauticalMilesToMeters(dist_traveled));
-		
-		dist_traveled_d = nauticalMilesToMeters(dist_traveled_d); 
-		System.out.println(dist_traveled_d);
-		
+		*/
+
+		// Max distance we can travel in meters given the airspeed and time limitations.
+		double gMax = nauticalMilesToMeters(nauticalMilesTraveled(airSpeed, time));
+		System.out.println("gmax: " + gMax);
+
 		RenderedImage image = coverage.getRenderedImage();
 		
 		int width = image.getWidth();
@@ -193,9 +193,6 @@ class FloodFill {
         openQueue.add(startNode);
         allMap.put(startNode.getHash(), startNode);
 
-        
-        double gMax = 100;
-		
         while (openQueue.size() != 0){
         	
         	PlannerNode currentNode = openQueue.poll();
