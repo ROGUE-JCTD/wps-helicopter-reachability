@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="libs/joda-time-2.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/media/jai_core/1.1.3/jai_core-1.1.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/media/jai_imageio/1.1/jai_imageio-1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/media/jai_codec/1.1.3/jai_codec-1.1.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-process/2.7-SNAPSHOT/gt-process-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-api/2.7-SNAPSHOT/gt-api-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/vividsolutions/jts/1.12/jts-1.12.jar"/>
+	<classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.4.0/xercesImpl-2.4.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-referencing/2.7-SNAPSHOT/gt-referencing-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/java3d/vecmath/1.3.2/vecmath-1.3.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.5.4/commons-pool-1.5.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-metadata/2.7-SNAPSHOT/gt-metadata-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-opengis/2.7-SNAPSHOT/gt-opengis-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/java/dev/jsr-275/jsr-275/1.0-beta-2/jsr-275-1.0-beta-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jgridshift/jgridshift/1.0/jgridshift-1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-main/2.7-SNAPSHOT/gt-main-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-coverage/2.7-SNAPSHOT/gt-coverage-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/it/geosolutions/imageio-ext/imageio-ext-tiff/1.1.3/imageio-ext-tiff-1.1.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/it/geosolutions/imageio-ext/imageio-ext-utilities/1.1.3/imageio-ext-utilities-1.1.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jaitools/jt-zonalstats/1.2.0/jt-zonalstats-1.2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jaitools/jt-utils/1.2.0/jt-utils-1.2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-cql/2.7-SNAPSHOT/gt-cql-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/geotools/gt-geometry/2.7-SNAPSHOT/gt-geometry-2.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-contour/1.1.1/jt-contour-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-attributeop/1.1.1/jt-attributeop-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-utils/1.1.1/jt-utils-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-rangelookup/1.1.1/jt-rangelookup-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-vectorize/1.1.1/jt-vectorize-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/googlecode/jaitools/jt-zonalstats/1.1.1/jt-zonalstats-1.1.1.jar"/>	
+	
+	<classpathentry combineaccessrules="false" kind="src" path="/wps-core"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
