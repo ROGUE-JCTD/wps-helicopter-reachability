@@ -61,6 +61,12 @@
       <artifactId>jts</artifactId>
       <version>1.12</version>
     </dependency>    
+
+    <dependency>
+      <groupId>net.java.dev</groupId>
+      <artifactId>jsr-275</artifactId>
+      <version>1.0-beta-2</version>
+    </dependency>    
     
     <dependency>
       <groupId>junit</groupId>
