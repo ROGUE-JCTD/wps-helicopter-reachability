@@ -141,7 +141,8 @@ class FloodFill {
 	
 	private static double geodeticDistanceInMeters(Point2D source, Point2D target)
 	{
-		GeodeticCalculator calculator = new GeodeticCalculator();
+		//TODO: avoid new since this gets called a lot
+		GeodeticCalculator calculator = new GeodeticCalculator(); 
 		calculator.setStartingGeographicPoint(source);
 		calculator.setDestinationGeographicPoint(target);
 		
@@ -149,6 +150,14 @@ class FloodFill {
 		return calculator.getOrthodromicDistance();
 	}
     
+//	private static void visitNode(PlannerNode node, WritableRaster raster){
+//	allMap.put(childNode.getHash(), childNode); // todo: change to Object.hash() ?
+//
+//	//put a one where this child is in the output raster 
+//	intArrayOne[0] = 1;
+//	raster.setPixel(node.x, node.y, intArrayOne);
+//}
+	
 	public static SimpleFeatureCollection floodFill(GridCoverage2D coverage, Geometry point, double maxElevation, double time /*use Duration instead*/, double airSpeed) throws Exception{
 
 		/*
@@ -198,6 +207,9 @@ class FloodFill {
         while (openQueue.size() != 0){
         	
         	PlannerNode currentNode = openQueue.poll();
+
+			// Pixel values to map locations
+			DirectPosition currentLoc = pixelToMap(new DirectPosition2D(currentNode.x, currentNode.y), coverage.getGridGeometry());
         	
         	for (int ii = 0; ii < 3; ii++) {
         		for (int j = 0; j < 3; j++) {
@@ -218,38 +230,45 @@ class FloodFill {
 	        				int hash = (cx << 16 | cy);
 	        				
 	        				PlannerNode existingNode = allMap.get(hash);
-//	        				print("-- child.x: ", cx, ", child.y: ", cy, ", hash: ", hash, ", new: ", (existingNode==undefined?true:false));
-	        				
-	        				// only if this spot has not been visited in the past
-	        				if (existingNode == null) {
-	        					double cg = 0;
 
-	        					// Pixel values to map locations
-	        					DirectPosition currentLoc = pixelToMap(new DirectPosition2D(currentNode.x, currentNode.y), coverage.getGridGeometry());
-	        					DirectPosition cLoc = pixelToMap(new DirectPosition2D(cx, cy), coverage.getGridGeometry());
-	        					
-	        					// TODO: It would probably be faster to project the raster to an equidistant projection and just use Euclidean distance formula
-	        					// rather than calling geodetic distance for every pixel-pixel calculation.
-	        					double newg = geodeticDistanceInMeters(new DirectPosition2D(currentLoc.getOrdinate(0), currentLoc.getOrdinate(1)),
-	        							new DirectPosition2D(cLoc.getOrdinate(0), cLoc.getOrdinate(1)));
-	        						        					
-        						cg = currentNode.g + newg;
-	        					
-//	        					System.out.println("-- child.x: "+ cx + ", child.y: " + cy + ", cg: " + cg + ", hash: " + hash + ", new: " + (existingNode==null?true:false));
-	        				
-	        					// do not push nodes that are beyond reachability cut-off
-	        					if(cg <= gMax) {
-	    							PlannerNode childNode =  new PlannerNode(currentNode, cx, cy, cg);
+        					// Pixel values to map locations
+        					DirectPosition cLoc = pixelToMap(new DirectPosition2D(cx, cy), coverage.getGridGeometry());
+
+        					// TODO: It would probably be faster to project the raster to an equidistant projection and just use Euclidean distance formula
+        					// rather than calling geodetic distance for every pixel-pixel calculation.
+        					//TODO: avoid news since this chunk gets called a lot
+        					double currentToChildG = geodeticDistanceInMeters(new DirectPosition2D(currentLoc.getOrdinate(0), currentLoc.getOrdinate(1)),
+        							new DirectPosition2D(cLoc.getOrdinate(0), cLoc.getOrdinate(1)));
+
+        					double cg = currentNode.g + currentToChildG;
+        					
+        					// do not push nodes that are beyond reachability cut-off
+        					if(cg <= gMax) {
+		        				// only if this spot has not been visited in the past
+		        				if (existingNode == null || cg < existingNode.g) {
+	//	        					System.out.println("-- child.x: "+ cx + ", child.y: " + cy + ", cg: " + cg + ", hash: " + hash + ", new: " + (existingNode==null?true:false));
+		        				
+	    							PlannerNode childNode =  null;
+	    							
+	    							if (existingNode == null) {
+	    								childNode = new PlannerNode(currentNode, cx, cy, cg);
+		    							allMap.put(hash, childNode);
+
+		    							//put a one where this child is in the output raster 
+		    							intArrayOne[0] = 1;
+		    							raster2.setPixel(cx, cy, intArrayOne);
+	    							} else {
+	    								existingNode.parent = currentNode;
+	    								existingNode.g = cg;
+	    								childNode = existingNode;
+	    								// existingNode is already in allMap so we'll leave it there
+	    							}
+	    							
 	    							openQueue.add(childNode);
-	    							// added to allMap so we do not regenerate this node again 
-	    							allMap.put(hash, childNode);
-	    							//put a one where this child is in the output raster 
-	    							intArrayOne[0] = 1;
-	    							raster2.setPixel(cx, cy, intArrayOne);
-	        					}
-	        				} else {
-	        					//print("-- location is already closed: " + closedNode.toString())
-	        				}
+		        				} else {
+		        					//print("-- location was visited and that was better than the new route
+		        				}
+        					}
         				}
         			}
         		}
